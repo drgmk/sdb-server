@@ -13,6 +13,7 @@ escape_sed_replacement() {
 server_root=$(escape_sed_replacement "$SDB_SERVER_ROOT")
 auth_file=$(escape_sed_replacement "$AUTH_PASSWORD_FILE")
 herschel_root=$(escape_sed_replacement "$HERSCHEL_ROOT")
+docs_root=$(escape_sed_replacement "$DOCS_ROOT")
 frontend_host=$(escape_sed_replacement "$FRONTEND_HOST")
 frontend_port=$(escape_sed_replacement "$FRONTEND_PORT")
 sdf_host=$(escape_sed_replacement "$SDF_HOST")
@@ -24,6 +25,7 @@ sed \
     -e "s|@SERVER_ROOT@|$server_root|g" \
     -e "s|@AUTH_PASSWORD_FILE@|$auth_file|g" \
     -e "s|@HERSCHEL_ROOT@|$herschel_root|g" \
+    -e "s|@DOCS_ROOT@|$docs_root|g" \
     -e "s|@FRONTEND_HOST@|$frontend_host|g" \
     -e "s|@FRONTEND_PORT@|$frontend_port|g" \
     -e "s|@SDF_HOST@|$sdf_host|g" \

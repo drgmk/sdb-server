@@ -2,10 +2,12 @@
 # Paths may be absolute or use shell parameter expansion such as $HOME.
 
 SDB_ROOT=/path/to/sdb
+SDF_ROOT=/path/to/sdf
 SDF_EXPORT_ROOT="$SDB_ROOT/rehearsals/multi-sample/export"
 
 SDF_FITS=/path/to/python-environment/bin/sdf-fits
 SDB_CLI=/path/to/python-environment/bin/sdb
+SPHINXBUILD=/path/to/python-environment/bin/sphinx-build
 
 SDB_DATABASE="$SDB_ROOT/rehearsals/multi-sample/sdb.sqlite"
 SDB_REFERENCE_DATABASE="$SDB_ROOT/sdb-reference.sqlite"
@@ -19,6 +21,7 @@ SESSION_SECRET_FILE="$SDB_SERVER_ROOT/session-secret"
 
 # Static publications are generated artifacts rather than repository content.
 HERSCHEL_ROOT="$SDB_SERVER_ROOT/www/herschel"
+DOCS_ROOT="$SDB_SERVER_ROOT/www/docs"
 
 HTTPD=/usr/sbin/httpd
 FRONTEND_HOST=127.0.0.1

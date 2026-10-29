@@ -9,7 +9,8 @@ Apache listens on one public-facing port and routes:
 
 - `/`, `/search`, `/target/...`, and `/system/...` to `sdf-fits serve`;
 - `/samples` and `/admin` to the same SDF service;
-- `/review/` to `sdb review serve`; and
+- `/review/` to `sdb review serve`;
+- `/docs/sdf/` and `/docs/sdb/` to generated project documentation; and
 - `/herschel/` directly to the generated TLDR PACS publication.
 
 ## Configure a host
@@ -52,6 +53,13 @@ bin/status
 bin/stop
 ```
 
+`bin/start` rebuilds both documentation sites with warnings treated as errors.
+They can also be rebuilt without restarting the services:
+
+```shell
+bin/build-docs
+```
+
 For a foreground process suitable for a service manager, use `bin/run`.
 Ctrl-C stops Apache and both application services.
 
@@ -70,7 +78,7 @@ The following are intentionally not versioned:
 - `.htpasswd` and `session-secret`;
 - `config/server.conf`;
 - logs, PID files, and matplotlib caches; and
-- `www/`, including the generated Herschel/PACS publication.
+- `www/`, including generated documentation and the Herschel/PACS publication.
 
 This keeps a clone small and reproducible. Restoring a server consists of
 installing `sdb` and `sdf`, supplying the local config and credentials,

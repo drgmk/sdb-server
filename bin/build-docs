@@ -1,0 +1,29 @@
+#!/bin/zsh
+
+set -eu
+
+source ${0:A:h}/common
+
+if [[ ! -x "$SPHINXBUILD" ]]; then
+    print -u2 "Missing Sphinx executable: $SPHINXBUILD"
+    print -u2 "Install the SDF documentation extra with: python -m pip install '.[docs]'"
+    exit 1
+fi
+
+for project in sdf sdb; do
+    if [[ "$project" == "sdf" ]]; then
+        source_root="$SDF_ROOT/docs"
+    else
+        source_root="$SDB_ROOT/docs"
+    fi
+    build_root="$DOCS_ROOT/$project"
+    if [[ ! -r "$source_root/conf.py" ]]; then
+        print -u2 "Missing $project documentation configuration: $source_root/conf.py"
+        exit 1
+    fi
+    "$SPHINXBUILD" -M clean "$source_root" "$build_root"
+    "$SPHINXBUILD" -M html "$source_root" "$build_root" -W --keep-going
+done
+
+print "SDF documentation built at $DOCS_ROOT/sdf/html/index.html"
+print "SDB documentation built at $DOCS_ROOT/sdb/html/index.html"

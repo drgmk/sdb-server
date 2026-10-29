@@ -31,9 +31,15 @@ review_status=$(curl --silent --output /dev/null --write-out '%{http_code}' \
     "http://$FRONTEND_HOST:$FRONTEND_PORT/review/" 2>/dev/null || true)
 herschel_status=$(curl --silent --location --output /dev/null --write-out '%{http_code}' \
     "http://$FRONTEND_HOST:$FRONTEND_PORT/herschel" 2>/dev/null || true)
+sdf_docs_status=$(curl --silent --location --output /dev/null --write-out '%{http_code}' \
+    "http://$FRONTEND_HOST:$FRONTEND_PORT/docs/sdf/" 2>/dev/null || true)
+sdb_docs_status=$(curl --silent --location --output /dev/null --write-out '%{http_code}' \
+    "http://$FRONTEND_HOST:$FRONTEND_PORT/docs/sdb/" 2>/dev/null || true)
 
 print "Public route: ${public_status:-unreachable}"
 print "Samples without credentials: ${samples_status:-unreachable} (expected 200)"
 print "Admin without credentials: ${admin_status:-unreachable} (expected 303)"
 print "Review without credentials: ${review_status:-unreachable} (expected 303)"
 print "Herschel publication: ${herschel_status:-unreachable} (expected 200)"
+print "SDF documentation: ${sdf_docs_status:-unreachable} (expected 200)"
+print "SDB documentation: ${sdb_docs_status:-unreachable} (expected 200)"

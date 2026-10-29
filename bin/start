@@ -37,6 +37,8 @@ if [[ -s "$apache_pid_file" ]] && kill -0 "$(<"$apache_pid_file")" 2>/dev/null; 
     exit 1
 fi
 
+"$SDB_SERVER_ROOT/bin/build-docs"
+
 MPLCONFIGDIR="$SDB_SERVER_ROOT/matplotlib" nohup "$SDF_FITS" serve "$SDF_EXPORT_ROOT" \
     --host "$SDF_HOST" \
     --port "$SDF_PORT" \
@@ -147,4 +149,6 @@ print "SDB website: http://$FRONTEND_HOST:$FRONTEND_PORT/"
 print "Samples: http://$FRONTEND_HOST:$FRONTEND_PORT/samples"
 print "Administrator UI: http://$FRONTEND_HOST:$FRONTEND_PORT/admin"
 print "Data review: http://$FRONTEND_HOST:$FRONTEND_PORT/review/"
+print "SDF documentation: http://$FRONTEND_HOST:$FRONTEND_PORT/docs/sdf/"
+print "SDB documentation: http://$FRONTEND_HOST:$FRONTEND_PORT/docs/sdb/"
 print "Fit workers: $SDF_FIT_WORKERS"
