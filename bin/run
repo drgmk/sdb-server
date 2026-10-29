@@ -1,0 +1,21 @@
+#!/bin/zsh
+
+set -eu
+
+SDB_SERVER_ROOT=${0:A:h:h}
+
+cleanup() {
+    trap - EXIT INT TERM
+    "$SDB_SERVER_ROOT/bin/stop"
+}
+
+trap cleanup EXIT INT TERM
+"$SDB_SERVER_ROOT/bin/start"
+
+apache_pid=$(<"$SDB_SERVER_ROOT/run/httpd.pid")
+while kill -0 "$apache_pid" 2>/dev/null; do
+    sleep 2
+done
+
+print -u2 "Apache exited unexpectedly; see $SDB_SERVER_ROOT/logs/apache-error.log"
+exit 1

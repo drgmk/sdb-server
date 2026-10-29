@@ -1,0 +1,13 @@
+.DS_Store
+
+# Site-local configuration and credentials.
+/config/server.conf
+/.htpasswd
+/session-secret
+/private/
+
+# Runtime state and generated publications.
+/logs/
+/run/
+/matplotlib/
+/www/

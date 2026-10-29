@@ -1,0 +1,45 @@
+#!/bin/zsh
+
+set -u
+
+source ${0:A:h}/common
+
+backend_pid_file="$SDB_SERVER_ROOT/run/sdf.pid"
+review_pid_file="$SDB_SERVER_ROOT/run/sdb-review.pid"
+apache_pid_file="$SDB_SERVER_ROOT/run/httpd.pid"
+
+if [[ -s "$apache_pid_file" && -s "$httpd_config" ]]; then
+    "$HTTPD" -f "$httpd_config" -k graceful-stop 2>/dev/null || true
+    for attempt in {1..20}; do
+        [[ ! -s "$apache_pid_file" ]] && break
+        apache_pid=$(<"$apache_pid_file")
+        kill -0 "$apache_pid" 2>/dev/null || break
+        sleep 0.25
+    done
+fi
+
+if [[ -s "$backend_pid_file" ]]; then
+    backend_pid=$(<"$backend_pid_file")
+    if [[ "$backend_pid" == <-> ]] && kill -0 "$backend_pid" 2>/dev/null; then
+        kill "$backend_pid"
+        for attempt in {1..40}; do
+            kill -0 "$backend_pid" 2>/dev/null || break
+            sleep 0.25
+        done
+    fi
+    rm -f "$backend_pid_file"
+fi
+
+if [[ -s "$review_pid_file" ]]; then
+    review_pid=$(<"$review_pid_file")
+    if [[ "$review_pid" == <-> ]] && kill -0 "$review_pid" 2>/dev/null; then
+        kill "$review_pid"
+        for attempt in {1..40}; do
+            kill -0 "$review_pid" 2>/dev/null || break
+            sleep 0.25
+        done
+    fi
+    rm -f "$review_pid_file"
+fi
+
+print "SDB website stopped."

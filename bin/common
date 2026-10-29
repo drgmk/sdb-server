@@ -1,0 +1,35 @@
+#!/bin/zsh
+
+set -u
+
+SDB_SERVER_ROOT=${0:A:h:h}
+config_file=${SDB_SERVER_CONFIG:-$SDB_SERVER_ROOT/config/server.conf}
+
+if [[ ! -r "$config_file" ]]; then
+    print -u2 "Missing server configuration: $config_file"
+    print -u2 "Copy $SDB_SERVER_ROOT/config/server.conf.example and edit it for this host."
+    return 1 2>/dev/null || exit 1
+fi
+
+source "$config_file"
+
+required_settings=(
+    SDF_EXPORT_ROOT SDF_FITS SDB_CLI SDB_DATABASE SDB_REFERENCE_DATABASE
+    SDB_CACHE_DATABASE SDB_CONFIG AUTH_PASSWORD_FILE SESSION_SECRET_FILE
+    HERSCHEL_ROOT HTTPD FRONTEND_HOST FRONTEND_PORT SDF_HOST SDF_PORT
+    SDB_REVIEW_HOST SDB_REVIEW_PORT SDF_FIT_WORKERS
+)
+
+for setting in $required_settings; do
+    if [[ -z ${(P)setting:-} ]]; then
+        print -u2 "Missing required setting in $config_file: $setting"
+        return 1 2>/dev/null || exit 1
+    fi
+done
+
+if [[ "$SDF_FIT_WORKERS" != <-> ]] || (( SDF_FIT_WORKERS < 1 )); then
+    print -u2 "SDF_FIT_WORKERS must be a positive integer"
+    return 1 2>/dev/null || exit 1
+fi
+
+httpd_config="$SDB_SERVER_ROOT/run/httpd.conf"

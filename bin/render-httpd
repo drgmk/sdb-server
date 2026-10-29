@@ -1,0 +1,35 @@
+#!/bin/zsh
+
+set -eu
+
+source ${0:A:h}/common
+
+mkdir -p "$SDB_SERVER_ROOT/run"
+
+escape_sed_replacement() {
+    print -r -- "$1" | sed 's/[&|\\]/\\&/g'
+}
+
+server_root=$(escape_sed_replacement "$SDB_SERVER_ROOT")
+auth_file=$(escape_sed_replacement "$AUTH_PASSWORD_FILE")
+herschel_root=$(escape_sed_replacement "$HERSCHEL_ROOT")
+frontend_host=$(escape_sed_replacement "$FRONTEND_HOST")
+frontend_port=$(escape_sed_replacement "$FRONTEND_PORT")
+sdf_host=$(escape_sed_replacement "$SDF_HOST")
+sdf_port=$(escape_sed_replacement "$SDF_PORT")
+review_host=$(escape_sed_replacement "$SDB_REVIEW_HOST")
+review_port=$(escape_sed_replacement "$SDB_REVIEW_PORT")
+
+sed \
+    -e "s|@SERVER_ROOT@|$server_root|g" \
+    -e "s|@AUTH_PASSWORD_FILE@|$auth_file|g" \
+    -e "s|@HERSCHEL_ROOT@|$herschel_root|g" \
+    -e "s|@FRONTEND_HOST@|$frontend_host|g" \
+    -e "s|@FRONTEND_PORT@|$frontend_port|g" \
+    -e "s|@SDF_HOST@|$sdf_host|g" \
+    -e "s|@SDF_PORT@|$sdf_port|g" \
+    -e "s|@REVIEW_HOST@|$review_host|g" \
+    -e "s|@REVIEW_PORT@|$review_port|g" \
+    "$SDB_SERVER_ROOT/config/httpd.conf.template" > "$httpd_config"
+
+print -r -- "$httpd_config"

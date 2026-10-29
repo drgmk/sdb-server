@@ -1,0 +1,150 @@
+#!/bin/zsh
+
+set -eu
+
+source ${0:A:h}/common
+
+backend_pid_file="$SDB_SERVER_ROOT/run/sdf.pid"
+review_pid_file="$SDB_SERVER_ROOT/run/sdb-review.pid"
+apache_pid_file="$SDB_SERVER_ROOT/run/httpd.pid"
+backend_log="$SDB_SERVER_ROOT/logs/sdf.log"
+review_log="$SDB_SERVER_ROOT/logs/sdb-review.log"
+
+mkdir -p "$SDB_SERVER_ROOT/logs" "$SDB_SERVER_ROOT/run" "$SDB_SERVER_ROOT/matplotlib"
+
+if [[ ! -s "$AUTH_PASSWORD_FILE" ]]; then
+    print -u2 "Missing or empty password file: $AUTH_PASSWORD_FILE"
+    exit 1
+fi
+
+if [[ ! -s "$SESSION_SECRET_FILE" ]]; then
+    print -u2 "Missing or empty session secret: $SESSION_SECRET_FILE"
+    exit 1
+fi
+
+if [[ -s "$backend_pid_file" ]] && kill -0 "$(<"$backend_pid_file")" 2>/dev/null; then
+    print -u2 "SDF backend is already running (PID $(<"$backend_pid_file"))."
+    exit 1
+fi
+
+if [[ -s "$review_pid_file" ]] && kill -0 "$(<"$review_pid_file")" 2>/dev/null; then
+    print -u2 "SDB review backend is already running (PID $(<"$review_pid_file"))."
+    exit 1
+fi
+
+if [[ -s "$apache_pid_file" ]] && kill -0 "$(<"$apache_pid_file")" 2>/dev/null; then
+    print -u2 "Apache frontend is already running (PID $(<"$apache_pid_file"))."
+    exit 1
+fi
+
+MPLCONFIGDIR="$SDB_SERVER_ROOT/matplotlib" nohup "$SDF_FITS" serve "$SDF_EXPORT_ROOT" \
+    --host "$SDF_HOST" \
+    --port "$SDF_PORT" \
+    --workers "$SDF_FIT_WORKERS" \
+    --autofit-existing \
+    --auth-user-header X-SDF-User \
+    --auth-database "$SDB_DATABASE" \
+    --auth-session-secret-file "$SESSION_SECRET_FILE" \
+    --review-base-url /review \
+    --sdb-executable "$SDB_CLI" \
+    --sdb-database "$SDB_DATABASE" \
+    --sdb-reference-database "$SDB_REFERENCE_DATABASE" \
+    --sdb-cache-database "$SDB_CACHE_DATABASE" \
+    --sdb-config "$SDB_CONFIG" \
+    >"$backend_log" 2>&1 &
+backend_pid=$!
+print -r -- "$backend_pid" > "$backend_pid_file"
+
+nohup "$SDB_CLI" \
+    --config "$SDB_CONFIG" \
+    --database "$SDB_DATABASE" \
+    --reference-database "$SDB_REFERENCE_DATABASE" \
+    --cache-database "$SDB_CACHE_DATABASE" \
+    review serve --all \
+    --host "$SDB_REVIEW_HOST" \
+    --port "$SDB_REVIEW_PORT" \
+    --base-path /review \
+    --sdf-base-url "" \
+    --auth-user-header X-SDF-User \
+    --auth-session-secret-file "$SESSION_SECRET_FILE" \
+    --auth-login-url /auth/login \
+    >"$review_log" 2>&1 &
+review_pid=$!
+print -r -- "$review_pid" > "$review_pid_file"
+
+backend_ready=0
+for attempt in {1..60}; do
+    if curl --silent --fail --output /dev/null "http://$SDF_HOST:$SDF_PORT/"; then
+        backend_ready=1
+        break
+    fi
+    sleep 1
+done
+
+if (( ! backend_ready )); then
+    print -u2 "SDF backend did not become ready; see $backend_log"
+    kill "$backend_pid" 2>/dev/null || true
+    rm -f "$backend_pid_file"
+    kill "$review_pid" 2>/dev/null || true
+    rm -f "$review_pid_file"
+    exit 1
+fi
+
+review_ready=0
+for attempt in {1..60}; do
+    review_status=$(curl --silent --output /dev/null --write-out '%{http_code}' \
+        "http://$SDB_REVIEW_HOST:$SDB_REVIEW_PORT/" 2>/dev/null || true)
+    if [[ "$review_status" == "303" ]]; then
+        review_ready=1
+        break
+    fi
+    sleep 1
+done
+
+if (( ! review_ready )); then
+    print -u2 "SDB review backend did not become ready; see $review_log"
+    kill "$review_pid" 2>/dev/null || true
+    kill "$backend_pid" 2>/dev/null || true
+    rm -f "$review_pid_file" "$backend_pid_file"
+    exit 1
+fi
+
+"$SDB_SERVER_ROOT/bin/render-httpd" >/dev/null
+
+if ! "$HTTPD" -t -f "$httpd_config"; then
+    kill "$review_pid" 2>/dev/null || true
+    kill "$backend_pid" 2>/dev/null || true
+    rm -f "$review_pid_file" "$backend_pid_file"
+    exit 1
+fi
+
+if ! "$HTTPD" -f "$httpd_config" -k start; then
+    kill "$review_pid" 2>/dev/null || true
+    kill "$backend_pid" 2>/dev/null || true
+    rm -f "$review_pid_file" "$backend_pid_file"
+    exit 1
+fi
+
+frontend_ready=0
+for attempt in {1..20}; do
+    if curl --silent --fail --output /dev/null "http://$FRONTEND_HOST:$FRONTEND_PORT/"; then
+        frontend_ready=1
+        break
+    fi
+    sleep 1
+done
+
+if (( ! frontend_ready )); then
+    print -u2 "Apache frontend did not become ready; see $SDB_SERVER_ROOT/logs/apache-error.log"
+    "$HTTPD" -f "$httpd_config" -k stop 2>/dev/null || true
+    kill "$review_pid" 2>/dev/null || true
+    kill "$backend_pid" 2>/dev/null || true
+    rm -f "$review_pid_file" "$backend_pid_file"
+    exit 1
+fi
+
+print "SDB website: http://$FRONTEND_HOST:$FRONTEND_PORT/"
+print "Samples: http://$FRONTEND_HOST:$FRONTEND_PORT/samples"
+print "Administrator UI: http://$FRONTEND_HOST:$FRONTEND_PORT/admin"
+print "Data review: http://$FRONTEND_HOST:$FRONTEND_PORT/review/"
+print "Fit workers: $SDF_FIT_WORKERS"

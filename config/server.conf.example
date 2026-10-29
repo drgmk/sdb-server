@@ -1,0 +1,33 @@
+# Copy this file to config/server.conf and adjust it for the host.
+# Paths may be absolute or use shell parameter expansion such as $HOME.
+
+SDB_ROOT=/path/to/sdb
+SDF_EXPORT_ROOT="$SDB_ROOT/rehearsals/multi-sample/export"
+
+SDF_FITS=/path/to/python-environment/bin/sdf-fits
+SDB_CLI=/path/to/python-environment/bin/sdb
+
+SDB_DATABASE="$SDB_ROOT/rehearsals/multi-sample/sdb.sqlite"
+SDB_REFERENCE_DATABASE="$SDB_ROOT/sdb-reference.sqlite"
+SDB_CACHE_DATABASE="$SDB_ROOT/sdb-cache.sqlite"
+SDB_CONFIG="$SDB_ROOT/sdb.toml"
+
+# These defaults keep private state inside the deployment directory. They are
+# ignored by Git and must be copied or created separately on each server.
+AUTH_PASSWORD_FILE="$SDB_SERVER_ROOT/.htpasswd"
+SESSION_SECRET_FILE="$SDB_SERVER_ROOT/session-secret"
+
+# Static publications are generated artifacts rather than repository content.
+HERSCHEL_ROOT="$SDB_SERVER_ROOT/www/herschel"
+
+HTTPD=/usr/sbin/httpd
+FRONTEND_HOST=127.0.0.1
+FRONTEND_PORT=8780
+SDF_HOST=127.0.0.1
+SDF_PORT=8781
+SDB_REVIEW_HOST=127.0.0.1
+SDB_REVIEW_PORT=8782
+
+# Two workers are conservative on a 16 GB development machine. Four is a
+# reasonable starting point when the machine is dedicated to serving SDB.
+SDF_FIT_WORKERS=2
