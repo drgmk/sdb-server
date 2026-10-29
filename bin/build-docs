@@ -4,6 +4,9 @@ set -eu
 
 source ${0:A:h}/common
 
+mkdir -p "$DOCS_ROOT"
+cp "$SDB_SERVER_ROOT/config/docs-index.html" "$DOCS_ROOT/index.html"
+
 if [[ ! -x "$SPHINXBUILD" ]]; then
     print -u2 "Missing Sphinx executable: $SPHINXBUILD"
     print -u2 "Install the SDF documentation extra with: python -m pip install '.[docs]'"
