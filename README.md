@@ -1,14 +1,14 @@
-# SDB server deployment
+# `sdb` server deployment
 
-This repository runs the combined SDB website: public SDF results and fitting,
-the SDB review interface, authentication, and optional static publications.
+This repository runs the combined `sdb` website: public SED results and fitting,
+the `sdb` review interface, authentication, and optional static publications.
 It is deployment glue rather than application code. The `sdb`, `sdf`, and
 `tldr_pacs` projects remain independently installable and versioned.
 
 Apache listens on one public-facing port and routes:
 
 - `/`, `/search`, `/target/...`, and `/system/...` to `sdf-fits serve`;
-- `/samples` and `/admin` to the same SDF service;
+- `/samples` and `/admin` to the same `sdf` service;
 - `/review/` to `sdb review serve`;
 - `/docs/sdf/` and `/docs/sdb/` to generated project documentation; and
 - `/herschel/` directly to the generated TLDR PACS publication.
@@ -30,10 +30,10 @@ session-secret
 ```
 
 Create `.htpasswd` with Apache's `htpasswd` utility. `session-secret` is a
-stable random value shared by the SDF and SDB processes for signing login
+stable random value shared by the `sdf` and `sdb` processes for signing login
 sessions. Keep both private and back them up outside this repository.
 
-The SDB database stores registered users, administrator roles, sample
+The `sdb` database stores registered users, administrator roles, sample
 ownership, public/private visibility, and explicit sharing. A password-file
 identity can be registered with:
 
@@ -74,7 +74,7 @@ memory under representative fits.
 
 The following are intentionally not versioned:
 
-- exported SED packages and SDB databases;
+- exported SED packages and `sdb` databases;
 - `.htpasswd` and `session-secret`;
 - `config/server.conf`;
 - logs, PID files, and matplotlib caches; and
@@ -100,7 +100,7 @@ python web/build.py \
   --preview-timeout 30
 ```
 
-The SDB catalogue provider should use the resulting `manifest.json` and
+The `sdb` catalogue provider should use the resulting `manifest.json` and
 `/herschel/` as its public base URL.
 
 ## Production

@@ -9,7 +9,7 @@ cp "$SDB_SERVER_ROOT/config/docs-index.html" "$DOCS_ROOT/index.html"
 
 if [[ ! -x "$SPHINXBUILD" ]]; then
     print -u2 "Missing Sphinx executable: $SPHINXBUILD"
-    print -u2 "Install the SDF documentation extra with: python -m pip install '.[docs]'"
+    print -u2 "Install the sdf documentation extra with: python -m pip install '.[docs]'"
     exit 1
 fi
 
@@ -28,5 +28,5 @@ for project in sdf sdb; do
     "$SPHINXBUILD" -M html "$source_root" "$build_root" -W --keep-going
 done
 
-print "SDF documentation built at $DOCS_ROOT/sdf/html/index.html"
-print "SDB documentation built at $DOCS_ROOT/sdb/html/index.html"
+print "sdf documentation built at $DOCS_ROOT/sdf/html/index.html"
+print "sdb documentation built at $DOCS_ROOT/sdb/html/index.html"

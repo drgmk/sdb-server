@@ -23,12 +23,12 @@ if [[ ! -s "$SESSION_SECRET_FILE" ]]; then
 fi
 
 if [[ -s "$backend_pid_file" ]] && kill -0 "$(<"$backend_pid_file")" 2>/dev/null; then
-    print -u2 "SDF backend is already running (PID $(<"$backend_pid_file"))."
+    print -u2 "sdf backend is already running (PID $(<"$backend_pid_file"))."
     exit 1
 fi
 
 if [[ -s "$review_pid_file" ]] && kill -0 "$(<"$review_pid_file")" 2>/dev/null; then
-    print -u2 "SDB review backend is already running (PID $(<"$review_pid_file"))."
+    print -u2 "sdb review backend is already running (PID $(<"$review_pid_file"))."
     exit 1
 fi
 
@@ -84,7 +84,7 @@ for attempt in {1..60}; do
 done
 
 if (( ! backend_ready )); then
-    print -u2 "SDF backend did not become ready; see $backend_log"
+    print -u2 "sdf backend did not become ready; see $backend_log"
     kill "$backend_pid" 2>/dev/null || true
     rm -f "$backend_pid_file"
     kill "$review_pid" 2>/dev/null || true
@@ -104,7 +104,7 @@ for attempt in {1..60}; do
 done
 
 if (( ! review_ready )); then
-    print -u2 "SDB review backend did not become ready; see $review_log"
+    print -u2 "sdb review backend did not become ready; see $review_log"
     kill "$review_pid" 2>/dev/null || true
     kill "$backend_pid" 2>/dev/null || true
     rm -f "$review_pid_file" "$backend_pid_file"
@@ -145,10 +145,10 @@ if (( ! frontend_ready )); then
     exit 1
 fi
 
-print "SDB website: http://$FRONTEND_HOST:$FRONTEND_PORT/"
+print "sdb website: http://$FRONTEND_HOST:$FRONTEND_PORT/"
 print "Samples: http://$FRONTEND_HOST:$FRONTEND_PORT/samples"
 print "Administrator UI: http://$FRONTEND_HOST:$FRONTEND_PORT/admin"
 print "Data review: http://$FRONTEND_HOST:$FRONTEND_PORT/review/"
-print "SDF documentation: http://$FRONTEND_HOST:$FRONTEND_PORT/docs/sdf/"
-print "SDB documentation: http://$FRONTEND_HOST:$FRONTEND_PORT/docs/sdb/"
+print "sdf documentation: http://$FRONTEND_HOST:$FRONTEND_PORT/docs/sdf/"
+print "sdb documentation: http://$FRONTEND_HOST:$FRONTEND_PORT/docs/sdb/"
 print "Fit workers: $SDF_FIT_WORKERS"

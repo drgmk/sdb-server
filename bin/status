@@ -17,8 +17,8 @@ show_process() {
     print "$label: stopped"
 }
 
-show_process "SDF backend" "$SDB_SERVER_ROOT/run/sdf.pid"
-show_process "SDB review backend" "$SDB_SERVER_ROOT/run/sdb-review.pid"
+show_process "sdf backend" "$SDB_SERVER_ROOT/run/sdf.pid"
+show_process "sdb review backend" "$SDB_SERVER_ROOT/run/sdb-review.pid"
 show_process "Apache frontend" "$SDB_SERVER_ROOT/run/httpd.pid"
 
 public_status=$(curl --silent --output /dev/null --write-out '%{http_code}' \
@@ -41,5 +41,5 @@ print "Samples without credentials: ${samples_status:-unreachable} (expected 200
 print "Admin without credentials: ${admin_status:-unreachable} (expected 303)"
 print "Review without credentials: ${review_status:-unreachable} (expected 303)"
 print "Herschel publication: ${herschel_status:-unreachable} (expected 200)"
-print "SDF documentation: ${sdf_docs_status:-unreachable} (expected 200)"
-print "SDB documentation: ${sdb_docs_status:-unreachable} (expected 200)"
+print "sdf documentation: ${sdf_docs_status:-unreachable} (expected 200)"
+print "sdb documentation: ${sdb_docs_status:-unreachable} (expected 200)"

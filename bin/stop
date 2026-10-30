@@ -42,4 +42,4 @@ if [[ -s "$review_pid_file" ]]; then
     rm -f "$review_pid_file"
 fi
 
-print "SDB website stopped."
+print "sdb website stopped."

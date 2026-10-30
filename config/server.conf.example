@@ -32,5 +32,5 @@ SDB_REVIEW_HOST=127.0.0.1
 SDB_REVIEW_PORT=8782
 
 # Two workers are conservative on a 16 GB development machine. Four is a
-# reasonable starting point when the machine is dedicated to serving SDB.
+# reasonable starting point when the machine is dedicated to serving sdb.
 SDF_FIT_WORKERS=2
