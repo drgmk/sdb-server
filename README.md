@@ -13,6 +13,13 @@ Apache listens on one public-facing port and routes:
 - `/docs/sdf/` and `/docs/sdb/` to generated project documentation; and
 - `/herschel/` directly to the generated TLDR PACS publication.
 
+Administrators can use `/admin/activity` for catalogue inventory, recent
+audited changes, queue health, and aggregate local page-use statistics. The
+frontend access log includes user-agent and request-duration fields so the
+report can exclude known crawlers and show request timing. The report never
+displays or copies client addresses; Cloudflare Web Analytics remains the
+appropriate view for visits, referrers, geography, and browser performance.
+
 ## Configure a host
 
 Copy the example and edit all paths for the machine:

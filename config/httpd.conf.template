@@ -22,8 +22,10 @@ LoadModule unixd_module /usr/libexec/apache2/mod_unixd.so
 
 ErrorLog "@SERVER_ROOT@/logs/apache-error.log"
 LogLevel warn
-LogFormat "%h %l %u %t \"%r\" %>s %b" common
-CustomLog "@SERVER_ROOT@/logs/apache-access.log" common
+# The application activity page reads this extended common format. It uses
+# paths, status, user agent, and duration, and discards the client address.
+LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\" %D" activity
+CustomLog "@SERVER_ROOT@/logs/apache-access.log" activity
 
 ServerTokens Prod
 ServerSignature Off

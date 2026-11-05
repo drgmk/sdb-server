@@ -48,6 +48,7 @@ MPLCONFIGDIR="$SDB_SERVER_ROOT/matplotlib" nohup "$SDF_FITS" serve "$SDF_EXPORT_
     --auth-database "$SDB_DATABASE" \
     --auth-session-secret-file "$SESSION_SECRET_FILE" \
     --review-base-url /review \
+    --access-log "$SDB_SERVER_ROOT/logs/apache-access.log" \
     --sdb-executable "$SDB_CLI" \
     --sdb-database "$SDB_DATABASE" \
     --sdb-reference-database "$SDB_REFERENCE_DATABASE" \
@@ -148,6 +149,7 @@ fi
 print "sdb website: http://$FRONTEND_HOST:$FRONTEND_PORT/"
 print "Samples: http://$FRONTEND_HOST:$FRONTEND_PORT/samples"
 print "Administrator UI: http://$FRONTEND_HOST:$FRONTEND_PORT/admin"
+print "Site activity: http://$FRONTEND_HOST:$FRONTEND_PORT/admin/activity"
 print "Data review: http://$FRONTEND_HOST:$FRONTEND_PORT/review/"
 print "sdf documentation: http://$FRONTEND_HOST:$FRONTEND_PORT/docs/sdf/"
 print "sdb documentation: http://$FRONTEND_HOST:$FRONTEND_PORT/docs/sdb/"
