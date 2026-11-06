@@ -77,6 +77,35 @@ dedicated to serving and fitting. Active MultiNest workers have previously
 used roughly 1.1--1.4 GB RSS each, so increase this only after monitoring peak
 memory under representative fits.
 
+## Backups
+
+Install the per-user launchd job once on each macOS server:
+
+```shell
+bin/install-backup
+```
+
+It runs at 03:15 each day and once when loaded. `bin/backup` can also be run
+directly. By default, 14 verified snapshots are retained under
+`private/backups`; each contains the live `sdb.sqlite`, the authoritative
+spectral assets, `sdb.toml`, the deployment configuration, `.htpasswd`, and
+the session secret. The directory is private and ignored by Git.
+
+Set `SDB_BACKUP_ROOT` in `config/server.conf` to a directory on another disk
+for protection against disk loss. A local snapshot only protects against
+database corruption and operator error. The reference and cache databases are
+rebuildable; set `SDB_BACKUP_INCLUDE_REFERENCE=1` or
+`SDB_BACKUP_INCLUDE_CACHE=1` if their download cost justifies the extra space.
+The large exported fit tree is not included in daily snapshots and is best
+handled separately by an incremental, encrypted off-machine backup.
+
+Inspect recent runs with:
+
+```shell
+tail -100 logs/backup.log
+launchctl print gui/$UID/com.drgmk.sdb-backup
+```
+
 ## Generated and private state
 
 The following are intentionally not versioned:

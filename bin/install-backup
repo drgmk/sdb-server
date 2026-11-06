@@ -1,0 +1,29 @@
+#!/bin/zsh
+
+set -eu
+
+source ${0:A:h}/common
+
+label=com.drgmk.sdb-backup
+agent_dir="$HOME/Library/LaunchAgents"
+agent="$agent_dir/$label.plist"
+uid=$EUID
+
+mkdir -p "$agent_dir" "$SDB_SERVER_ROOT/logs"
+
+escaped_root=${SDB_SERVER_ROOT//&/&amp;}
+escaped_root=${escaped_root//</&lt;}
+escaped_root=${escaped_root//>/&gt;}
+
+sed "s|@SDB_SERVER_ROOT@|$escaped_root|g" \
+    "$SDB_SERVER_ROOT/config/com.drgmk.sdb-backup.plist.in" > "$agent"
+chmod 600 "$agent"
+
+launchctl bootout "gui/$uid/$label" 2>/dev/null || true
+launchctl bootstrap "gui/$uid" "$agent"
+launchctl enable "gui/$uid/$label"
+
+print "Installed daily sdb backup: $agent"
+print "Destination: $SDB_BACKUP_ROOT"
+print "Run now: launchctl kickstart -k gui/$uid/$label"
+

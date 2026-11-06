@@ -34,3 +34,12 @@ SDB_REVIEW_PORT=8782
 # Two workers are conservative on a 16 GB development machine. Four is a
 # reasonable starting point when the machine is dedicated to serving sdb.
 SDF_FIT_WORKERS=2
+
+# Daily verified database snapshots. Put this on another mounted disk for
+# protection against loss of the server disk. Reference and cache databases
+# are rebuildable and omitted by default.
+SDB_BACKUP_ROOT="$SDB_SERVER_ROOT/private/backups"
+SDB_BACKUP_KEEP=14
+SDB_BACKUP_INCLUDE_REFERENCE=0
+SDB_BACKUP_INCLUDE_CACHE=0
+SDB_ASSET_ROOT="$SDB_ROOT/rehearsals/multi-sample/assets"

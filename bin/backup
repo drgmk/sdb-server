@@ -1,0 +1,32 @@
+#!/bin/zsh
+
+set -eu
+
+source ${0:A:h}/common
+
+mkdir -p "$SDB_BACKUP_ROOT" "$SDB_SERVER_ROOT/logs"
+chmod 700 "$SDB_BACKUP_ROOT"
+
+arguments=(
+    --config "$SDB_CONFIG"
+    --database "$SDB_DATABASE"
+    --reference-database "$SDB_REFERENCE_DATABASE"
+    --cache-database "$SDB_CACHE_DATABASE"
+    backup "$SDB_BACKUP_ROOT"
+    --keep "$SDB_BACKUP_KEEP"
+    --include "assets=$SDB_ASSET_ROOT"
+    --include "sdb-config=$SDB_CONFIG"
+    --include "server-config=$config_file"
+    --include "passwords=$AUTH_PASSWORD_FILE"
+    --include "session-secret=$SESSION_SECRET_FILE"
+)
+
+if [[ "${SDB_BACKUP_INCLUDE_REFERENCE:-0}" == "1" ]]; then
+    arguments+=(--include-reference)
+fi
+if [[ "${SDB_BACKUP_INCLUDE_CACHE:-0}" == "1" ]]; then
+    arguments+=(--include-cache)
+fi
+
+"$SDB_CLI" $arguments
+

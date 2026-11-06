@@ -13,6 +13,15 @@ fi
 
 source "$config_file"
 
+# Backup defaults are deliberately local and conservative. Point
+# SDB_BACKUP_ROOT at another mounted disk for protection against server-disk
+# loss, or replicate this directory with an encrypted backup tool.
+: ${SDB_BACKUP_ROOT:="$SDB_SERVER_ROOT/private/backups"}
+: ${SDB_BACKUP_KEEP:=14}
+: ${SDB_BACKUP_INCLUDE_REFERENCE:=0}
+: ${SDB_BACKUP_INCLUDE_CACHE:=0}
+: ${SDB_ASSET_ROOT:="$SDB_ROOT/rehearsals/multi-sample/assets"}
+
 required_settings=(
     SDB_ROOT SDF_ROOT SDF_EXPORT_ROOT SDF_FITS SDB_CLI SPHINXBUILD
     SDB_DATABASE SDB_REFERENCE_DATABASE
@@ -30,6 +39,11 @@ done
 
 if [[ "$SDF_FIT_WORKERS" != <-> ]] || (( SDF_FIT_WORKERS < 1 )); then
     print -u2 "SDF_FIT_WORKERS must be a positive integer"
+    return 1 2>/dev/null || exit 1
+fi
+
+if [[ "$SDB_BACKUP_KEEP" != <-> ]] || (( SDB_BACKUP_KEEP < 1 )); then
+    print -u2 "SDB_BACKUP_KEEP must be a positive integer"
     return 1 2>/dev/null || exit 1
 fi
 
