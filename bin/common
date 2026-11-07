@@ -21,6 +21,7 @@ source "$config_file"
 : ${SDB_BACKUP_INCLUDE_REFERENCE:=0}
 : ${SDB_BACKUP_INCLUDE_CACHE:=0}
 : ${SDB_ASSET_ROOT:="$SDB_ROOT/rehearsals/multi-sample/assets"}
+: ${SDB_IMPORT_TIMEOUT:=7200}
 
 required_settings=(
     SDB_ROOT SDF_ROOT SDF_EXPORT_ROOT SDF_FITS SDB_CLI SPHINXBUILD
@@ -39,6 +40,11 @@ done
 
 if [[ "$SDF_FIT_WORKERS" != <-> ]] || (( SDF_FIT_WORKERS < 1 )); then
     print -u2 "SDF_FIT_WORKERS must be a positive integer"
+    return 1 2>/dev/null || exit 1
+fi
+
+if [[ "$SDB_IMPORT_TIMEOUT" != <-> ]] || (( SDB_IMPORT_TIMEOUT < 1 )); then
+    print -u2 "SDB_IMPORT_TIMEOUT must be a positive integer number of seconds"
     return 1 2>/dev/null || exit 1
 fi
 

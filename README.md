@@ -70,6 +70,23 @@ bin/build-docs
 For a foreground process suitable for a service manager, use `bin/run`.
 Ctrl-C stops Apache and both application services.
 
+On a macOS server, install the supplied per-user launchd service instead of
+starting it by hand:
+
+```shell
+bin/install-service
+```
+
+It starts the complete site at login, restarts it after an unexpected exit,
+and writes supervisor output to `logs/service.log`. Use `bin/status` for the
+application processes and `launchctl print gui/$UID/com.drgmk.sdb-server` for
+the supervisor. `bin/uninstall-service` stops and removes the service.
+
+Large UI sample imports report their current target/provider stage on the job
+page. `SDB_IMPORT_TIMEOUT` is the final subprocess time limit in seconds and
+defaults to two hours; it can be changed in `config/server.conf` if a larger
+catalogue needs longer.
+
 The local development configuration uses two fit workers. On the 10-core,
 16 GB M2 Pro this is conservative while Chrome, VS Code, and Codex are also
 running. Four workers is a reasonable starting point when the machine is
@@ -144,4 +161,5 @@ The `sdb` catalogue provider should use the resulting `manifest.json` and
 The supplied configuration is intended for a loopback service, optionally
 published through a trusted tunnel or reverse proxy. For a conventional public
 deployment, add HTTPS and host-name configuration at that boundary and run
-`bin/run` under the host's service manager.
+`bin/run` under the host's service manager. On macOS, `bin/install-service`
+provides that launchd integration.

@@ -1,0 +1,15 @@
+#!/bin/zsh
+
+set -eu
+
+source ${0:A:h}/common
+
+label=com.drgmk.sdb-server
+agent="$HOME/Library/LaunchAgents/$label.plist"
+uid=$EUID
+
+launchctl bootout "gui/$uid/$label" 2>/dev/null || true
+"$SDB_SERVER_ROOT/bin/stop" >/dev/null 2>&1 || true
+rm -f "$agent"
+
+print "Stopped and removed sdb website service."

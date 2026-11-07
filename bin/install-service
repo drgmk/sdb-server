@@ -1,0 +1,29 @@
+#!/bin/zsh
+
+set -eu
+
+source ${0:A:h}/common
+
+label=com.drgmk.sdb-server
+agent_dir="$HOME/Library/LaunchAgents"
+agent="$agent_dir/$label.plist"
+uid=$EUID
+
+mkdir -p "$agent_dir" "$SDB_SERVER_ROOT/logs"
+
+escaped_root=${SDB_SERVER_ROOT//&/&amp;}
+escaped_root=${escaped_root//</&lt;}
+escaped_root=${escaped_root//>/&gt;}
+
+sed "s|@SDB_SERVER_ROOT@|$escaped_root|g" \
+    "$SDB_SERVER_ROOT/config/com.drgmk.sdb-server.plist.in" > "$agent"
+chmod 600 "$agent"
+
+launchctl bootout "gui/$uid/$label" 2>/dev/null || true
+"$SDB_SERVER_ROOT/bin/stop" >/dev/null 2>&1 || true
+launchctl bootstrap "gui/$uid" "$agent"
+launchctl enable "gui/$uid/$label"
+
+print "Installed and started sdb website service: $agent"
+print "Status: launchctl print gui/$uid/$label"
+print "Log: $SDB_SERVER_ROOT/logs/service.log"
