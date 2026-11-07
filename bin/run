@@ -12,10 +12,14 @@ cleanup() {
 trap cleanup EXIT INT TERM
 "$SDB_SERVER_ROOT/bin/start"
 
+backend_pid=$(<"$SDB_SERVER_ROOT/run/sdf.pid")
+review_pid=$(<"$SDB_SERVER_ROOT/run/sdb-review.pid")
 apache_pid=$(<"$SDB_SERVER_ROOT/run/httpd.pid")
-while kill -0 "$apache_pid" 2>/dev/null; do
+while kill -0 "$backend_pid" 2>/dev/null \
+    && kill -0 "$review_pid" 2>/dev/null \
+    && kill -0 "$apache_pid" 2>/dev/null; do
     sleep 2
 done
 
-print -u2 "Apache exited unexpectedly; see $SDB_SERVER_ROOT/logs/apache-error.log"
+print -u2 "A website process exited unexpectedly; see $SDB_SERVER_ROOT/logs/"
 exit 1

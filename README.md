@@ -78,7 +78,8 @@ bin/install-service
 ```
 
 It starts the complete site at login, restarts it after an unexpected exit,
-and writes supervisor output to `logs/service.log`. Use `bin/status` for the
+monitors all three website processes, and writes supervisor output to
+`logs/service.log`. Use `bin/status` for the
 application processes and `launchctl print gui/$UID/com.drgmk.sdb-server` for
 the supervisor. `bin/uninstall-service` stops and removes the service.
 
