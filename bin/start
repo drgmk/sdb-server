@@ -55,6 +55,7 @@ MPLCONFIGDIR="$SDB_SERVER_ROOT/matplotlib" nohup "$SDF_FITS" serve "$SDF_EXPORT_
     --sdb-cache-database "$SDB_CACHE_DATABASE" \
     --sdb-config "$SDB_CONFIG" \
     --sdb-import-timeout "$SDB_IMPORT_TIMEOUT" \
+    --sdb-sample-import-timeout "$SDB_SAMPLE_IMPORT_TIMEOUT" \
     >"$backend_log" 2>&1 &
 backend_pid=$!
 print -r -- "$backend_pid" > "$backend_pid_file"
@@ -155,4 +156,5 @@ print "Data review: http://$FRONTEND_HOST:$FRONTEND_PORT/review/"
 print "sdf documentation: http://$FRONTEND_HOST:$FRONTEND_PORT/docs/sdf/"
 print "sdb documentation: http://$FRONTEND_HOST:$FRONTEND_PORT/docs/sdb/"
 print "Fit workers: $SDF_FIT_WORKERS"
-print "Sample import timeout: $SDB_IMPORT_TIMEOUT seconds"
+print "Ordinary sdb command timeout: $SDB_IMPORT_TIMEOUT seconds"
+print "Large sample import guard: $SDB_SAMPLE_IMPORT_TIMEOUT seconds"

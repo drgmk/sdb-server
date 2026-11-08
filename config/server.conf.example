@@ -37,7 +37,8 @@ SDF_FIT_WORKERS=2
 
 # Sample acquisition can resolve and update hundreds of targets. The web job
 # shows live progress, while this remains a final guard against a stuck child.
-SDB_IMPORT_TIMEOUT=7200
+SDB_IMPORT_TIMEOUT=1800
+SDB_SAMPLE_IMPORT_TIMEOUT=43200
 
 # Daily verified database snapshots. Put this on another mounted disk for
 # protection against loss of the server disk. Reference and cache databases

@@ -84,9 +84,10 @@ application processes and `launchctl print gui/$UID/com.drgmk.sdb-server` for
 the supervisor. `bin/uninstall-service` stops and removes the service.
 
 Large UI sample imports report their current target/provider stage on the job
-page. `SDB_IMPORT_TIMEOUT` is the final subprocess time limit in seconds and
-defaults to two hours; it can be changed in `config/server.conf` if a larger
-catalogue needs longer.
+page. Ordinary `sdb` commands retain a 30-minute `SDB_IMPORT_TIMEOUT` guard.
+Resumable sample imports use `SDB_SAMPLE_IMPORT_TIMEOUT`, which defaults to 12
+hours so a healthy large import is not killed merely for taking time. Both can
+be changed in `config/server.conf`.
 
 The local development configuration uses two fit workers. On the 10-core,
 16 GB M2 Pro this is conservative while Chrome, VS Code, and Codex are also
