@@ -23,6 +23,7 @@ source "$config_file"
 : ${SDB_ASSET_ROOT:="$SDB_ROOT/rehearsals/multi-sample/assets"}
 : ${SDB_IMPORT_TIMEOUT:=1800}
 : ${SDB_SAMPLE_IMPORT_TIMEOUT:=43200}
+: ${SDF_ACTIVITY_TIMEZONE:=UTC}
 
 required_settings=(
     SDB_ROOT SDF_ROOT SDF_EXPORT_ROOT SDF_FITS SDB_CLI SPHINXBUILD

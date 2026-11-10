@@ -49,6 +49,7 @@ MPLCONFIGDIR="$SDB_SERVER_ROOT/matplotlib" nohup "$SDF_FITS" serve "$SDF_EXPORT_
     --auth-session-secret-file "$SESSION_SECRET_FILE" \
     --review-base-url /review \
     --access-log "$SDB_SERVER_ROOT/logs/apache-access.log" \
+    --activity-timezone "$SDF_ACTIVITY_TIMEZONE" \
     --sdb-executable "$SDB_CLI" \
     --sdb-database "$SDB_DATABASE" \
     --sdb-reference-database "$SDB_REFERENCE_DATABASE" \

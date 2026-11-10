@@ -35,6 +35,10 @@ SDB_REVIEW_PORT=8782
 # reasonable starting point when the machine is dedicated to serving sdb.
 SDF_FIT_WORKERS=2
 
+# Calendar dates and event times shown on the admin activity page. This is an
+# IANA timezone name; stored timestamps and cutoffs remain UTC.
+SDF_ACTIVITY_TIMEZONE=UTC
+
 # Sample acquisition can resolve and update hundreds of targets. The web job
 # shows live progress, while this remains a final guard against a stuck child.
 SDB_IMPORT_TIMEOUT=1800

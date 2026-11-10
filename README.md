@@ -20,6 +20,10 @@ report can exclude known crawlers and show request timing. The report never
 displays or copies client addresses; Cloudflare Web Analytics remains the
 appropriate view for visits, referrers, geography, and browser performance.
 
+Set `SDF_ACTIVITY_TIMEZONE` to an IANA timezone such as
+`Pacific/Auckland` to control the event times and daily page-view dates shown
+on the activity page. Timestamps remain stored in UTC.
+
 ## Configure a host
 
 Copy the example and edit all paths for the machine:
