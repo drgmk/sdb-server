@@ -13,6 +13,12 @@ Apache listens on one public-facing port and routes:
 - `/docs/sdf/` and `/docs/sdb/` to generated project documentation; and
 - `/herschel/` directly to the generated TLDR PACS publication.
 
+If an application backend is briefly unavailable, Apache serves a small static
+error page from `config/backend-unavailable.html`. It preserves and polls the
+original URL so an import progress page recovers automatically after a service
+restart. This fallback applies to HTTP 502, 503, and 504 responses and does not
+depend on either Python service being available.
+
 Administrators can use `/admin/activity` for catalogue inventory, recent
 audited changes, queue health, and aggregate local page-use statistics. The
 frontend access log includes user-agent and request-duration fields so the

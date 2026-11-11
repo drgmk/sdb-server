@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>sdb temporarily unavailable</title>
+  <style>
+    :root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#17202b;background:#f5f7fa}
+    *{box-sizing:border-box}
+    body{margin:0}
+    header,main{max-width:1160px;margin:0 auto;padding:0 18px}
+    header{max-width:none;background:#fff;border-bottom:1px solid #dce3ec;padding-top:14px;padding-bottom:14px}
+    header div{max-width:1124px;margin:0 auto;font-size:22px;font-weight:700}
+    code{font:inherit}
+    section{max-width:720px;margin:48px auto;background:#fff;border:1px solid #dce3ec;border-radius:9px;padding:24px}
+    h1{font-size:25px;margin:0 0 12px}
+    p{line-height:1.55}
+    .muted{color:#637183}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+    .button{display:inline-block;padding:8px 11px;border:1px solid #9facbb;border-radius:6px;background:#fff;color:#173a60;text-decoration:none;cursor:pointer}
+  </style>
+</head>
+<body>
+  <header><div><code>sdb</code></div></header>
+  <main>
+    <section>
+      <h1>Temporarily unavailable</h1>
+      <p>The web service could not answer this request. If you were watching an import or fit, its background job may still be running.</p>
+      <p id="retry-status" class="muted" role="status">This page will retry automatically.</p>
+      <div class="actions">
+        <a class="button" href="">Try again</a>
+        <a class="button" href="/status">Status</a>
+        <a class="button" href="/">Home</a>
+      </div>
+    </section>
+  </main>
+  <script>
+  (() => {
+    const status = document.getElementById('retry-status');
+    async function retry() {
+      try {
+        const response = await fetch(window.location.href, {
+          cache: 'no-store',
+          headers: {'Accept': 'text/html'}
+        });
+        if (response.ok) {
+          window.location.reload();
+          return;
+        }
+        status.textContent = 'The service is still unavailable; trying again shortly.';
+      } catch (problem) {
+        status.textContent = 'The service is still unavailable; trying again shortly.';
+      }
+      window.setTimeout(retry, 10000);
+    }
+    window.setTimeout(retry, 10000);
+  })();
+  </script>
+</body>
+</html>

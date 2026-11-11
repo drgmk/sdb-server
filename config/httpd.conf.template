@@ -88,6 +88,22 @@ Alias /docs/ "@DOCS_ROOT@/"
     Require all granted
 </Directory>
 
+# Keep backend failures useful even when neither Python service can respond.
+# ErrorDocument is an internal subrequest, so the browser retains the original
+# job URL and the static page can retry it after a brief service interruption.
+ProxyPass /service-unavailable.html !
+Alias /service-unavailable.html "@SERVER_ROOT@/config/backend-unavailable.html"
+<Directory "@SERVER_ROOT@/config">
+    Options -Indexes
+    AllowOverride None
+    <Files "backend-unavailable.html">
+        Require all granted
+    </Files>
+</Directory>
+ErrorDocument 502 /service-unavailable.html
+ErrorDocument 503 /service-unavailable.html
+ErrorDocument 504 /service-unavailable.html
+
 ProxyPass        /review/ http://@REVIEW_HOST@:@REVIEW_PORT@/ connectiontimeout=5 timeout=300
 ProxyPassReverse /review/ http://@REVIEW_HOST@:@REVIEW_PORT@/
 ProxyPass        /review http://@REVIEW_HOST@:@REVIEW_PORT@/
