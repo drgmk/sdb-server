@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.drgmk.sdb-cleanup</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>@SDB_SERVER_ROOT@/bin/cleanup-sampler-work</string>
+  </array>
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key>
+    <integer>4</integer>
+    <key>Minute</key>
+    <integer>15</integer>
+  </dict>
+  <key>ProcessType</key>
+  <string>Background</string>
+  <key>LowPriorityIO</key>
+  <true/>
+  <key>StandardOutPath</key>
+  <string>@SDB_SERVER_ROOT@/logs/cleanup.log</string>
+  <key>StandardErrorPath</key>
+  <string>@SDB_SERVER_ROOT@/logs/cleanup.log</string>
+</dict>
+</plist>

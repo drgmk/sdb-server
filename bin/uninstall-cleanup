@@ -1,0 +1,14 @@
+#!/bin/zsh
+
+set -eu
+
+label=com.drgmk.sdb-cleanup
+agent="$HOME/Library/LaunchAgents/$label.plist"
+uid=$EUID
+
+launchctl bootout "gui/$uid/$label" 2>/dev/null || true
+if [[ -f "$agent" ]]; then
+    mv "$agent" "$agent.disabled"
+fi
+
+print "Uninstalled sampler cleanup job"

@@ -24,6 +24,9 @@ source "$config_file"
 : ${SDB_IMPORT_TIMEOUT:=1800}
 : ${SDB_SAMPLE_IMPORT_TIMEOUT:=43200}
 : ${SDF_ACTIVITY_TIMEZONE:=UTC}
+: ${SDF_CLEANUP_SUPERSEDED_DAYS:=7}
+: ${SDF_CLEANUP_COMMITTED_DAYS:=30}
+: ${SDF_CLEANUP_INTERRUPTED_DAYS:=30}
 
 required_settings=(
     SDB_ROOT SDF_ROOT SDF_EXPORT_ROOT SDF_FITS SDB_CLI SPHINXBUILD
@@ -60,5 +63,13 @@ if [[ "$SDB_BACKUP_KEEP" != <-> ]] || (( SDB_BACKUP_KEEP < 1 )); then
     print -u2 "SDB_BACKUP_KEEP must be a positive integer"
     return 1 2>/dev/null || exit 1
 fi
+
+for setting in SDF_CLEANUP_SUPERSEDED_DAYS SDF_CLEANUP_COMMITTED_DAYS \
+        SDF_CLEANUP_INTERRUPTED_DAYS; do
+    if [[ "${(P)setting}" != <-> ]] || (( ${(P)setting} < 1 )); then
+        print -u2 "$setting must be a positive integer number of days"
+        return 1 2>/dev/null || exit 1
+    fi
+done
 
 httpd_config="$SDB_SERVER_ROOT/run/httpd.conf"

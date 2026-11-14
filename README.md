@@ -106,6 +106,36 @@ dedicated to serving and fitting. Active MultiNest workers have previously
 used roughly 1.1--1.4 GB RSS each, so increase this only after monitoring peak
 memory under representative fits.
 
+## Sampler-work cleanup
+
+Completed fits retain compact posterior, analysis, and plotting artifacts.
+The much larger native MultiNest files under each `fits/.work/` directory are
+only useful temporarily for resuming interrupted work or diagnosing a recent
+fit. Inspect the current cleanup decision without changing files:
+
+```shell
+sdf-fits cleanup "$SDF_EXPORT_ROOT"
+```
+
+Install the daily launchd job with:
+
+```shell
+bin/install-cleanup
+```
+
+It runs at 04:15 local time and applies the retention values in
+`config/server.conf`: seven days for superseded completed work and 30 days for
+committed or interrupted work. Queued/running packages and held fit locks are
+always skipped. The installer does not run cleanup immediately. Inspect runs
+with:
+
+```shell
+tail -100 logs/cleanup.log
+launchctl print gui/$UID/com.drgmk.sdb-cleanup
+```
+
+Use `bin/uninstall-cleanup` to unload and disable the job.
+
 ## Backups
 
 Install the per-user launchd job once on each macOS server:

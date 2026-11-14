@@ -1,0 +1,15 @@
+#!/bin/zsh
+
+set -eu
+
+source ${0:A:h}/common
+
+mkdir -p "$SDB_SERVER_ROOT/logs" "$SDB_SERVER_ROOT/matplotlib"
+
+MPLCONFIGDIR="$SDB_SERVER_ROOT/matplotlib" "$SDF_FITS" cleanup \
+    "$SDF_EXPORT_ROOT" \
+    --state "$SDF_EXPORT_ROOT/sdf-operator.sqlite" \
+    --superseded-days "$SDF_CLEANUP_SUPERSEDED_DAYS" \
+    --committed-days "$SDF_CLEANUP_COMMITTED_DAYS" \
+    --interrupted-days "$SDF_CLEANUP_INTERRUPTED_DAYS" \
+    --apply

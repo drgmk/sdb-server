@@ -35,6 +35,12 @@ SDB_REVIEW_PORT=8782
 # reasonable starting point when the machine is dedicated to serving sdb.
 SDF_FIT_WORKERS=2
 
+# Daily sampler-work retention. Compact fit results remain available after
+# their large native MultiNest work files are removed.
+SDF_CLEANUP_SUPERSEDED_DAYS=7
+SDF_CLEANUP_COMMITTED_DAYS=30
+SDF_CLEANUP_INTERRUPTED_DAYS=30
+
 # Calendar dates and event times shown on the admin activity page. This is an
 # IANA timezone name; stored timestamps and cutoffs remain UTC.
 SDF_ACTIVITY_TIMEZONE=UTC
