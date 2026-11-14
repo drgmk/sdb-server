@@ -30,7 +30,7 @@ admin_status=$(curl --silent --output /dev/null --write-out '%{http_code}' \
 review_status=$(curl --silent --output /dev/null --write-out '%{http_code}' \
     "http://$FRONTEND_HOST:$FRONTEND_PORT/review/" 2>/dev/null || true)
 herschel_status=$(curl --silent --location --output /dev/null --write-out '%{http_code}' \
-    "http://$FRONTEND_HOST:$FRONTEND_PORT/herschel" 2>/dev/null || true)
+    "http://$FRONTEND_HOST:$FRONTEND_PORT/herschel/" 2>/dev/null || true)
 sdf_docs_status=$(curl --silent --location --output /dev/null --write-out '%{http_code}' \
     "http://$FRONTEND_HOST:$FRONTEND_PORT/docs/sdf/" 2>/dev/null || true)
 sdb_docs_status=$(curl --silent --location --output /dev/null --write-out '%{http_code}' \
