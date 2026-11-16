@@ -14,6 +14,7 @@ arguments=(
     --cache-database "$SDB_CACHE_DATABASE"
     backup "$SDB_BACKUP_ROOT"
     --keep "$SDB_BACKUP_KEEP"
+    --include-database "sdf-operator=$SDF_OPERATOR_DATABASE"
     --include "assets=$SDB_ASSET_ROOT"
     --include "sdb-config=$SDB_CONFIG"
     --include "server-config=$config_file"

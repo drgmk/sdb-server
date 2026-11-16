@@ -146,9 +146,11 @@ bin/install-backup
 
 It runs at 03:15 each day and once when loaded. `bin/backup` can also be run
 directly. By default, 14 verified snapshots are retained under
-`private/backups`; each contains the live `sdb.sqlite`, the authoritative
-spectral assets, `sdb.toml`, the deployment configuration, `.htpasswd`, and
-the session secret. The directory is private and ignored by Git.
+`private/backups`; each contains the live `sdb.sqlite`, `sdf-operator.sqlite`
+(persistent fit customisations and job state), the authoritative spectral
+assets, `sdb.toml`, the deployment configuration, `.htpasswd`, and the session
+secret. Both SQLite databases are copied online and integrity-checked. The
+directory is private and ignored by Git.
 
 Set `SDB_BACKUP_ROOT` in `config/server.conf` to a directory on another disk
 for protection against disk loss. A local snapshot only protects against

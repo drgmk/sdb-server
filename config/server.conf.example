@@ -4,6 +4,7 @@
 SDB_ROOT=/path/to/sdb
 SDF_ROOT=/path/to/sdf
 SDF_EXPORT_ROOT="$SDB_ROOT/rehearsals/multi-sample/export"
+SDF_OPERATOR_DATABASE="$SDF_EXPORT_ROOT/sdf-operator.sqlite"
 
 SDF_FITS=/path/to/python-environment/bin/sdf-fits
 SDB_CLI=/path/to/python-environment/bin/sdb
@@ -50,9 +51,10 @@ SDF_ACTIVITY_TIMEZONE=UTC
 SDB_IMPORT_TIMEOUT=1800
 SDB_SAMPLE_IMPORT_TIMEOUT=43200
 
-# Daily verified database snapshots. Put this on another mounted disk for
-# protection against loss of the server disk. Reference and cache databases
-# are rebuildable and omitted by default.
+# Daily verified database snapshots. The main and SDF operator databases are
+# always included. Put this on another mounted disk for protection against
+# loss of the server disk. Reference and cache databases are rebuildable and
+# omitted by default.
 SDB_BACKUP_ROOT="$SDB_SERVER_ROOT/private/backups"
 SDB_BACKUP_KEEP=14
 SDB_BACKUP_INCLUDE_REFERENCE=0
