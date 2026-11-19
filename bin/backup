@@ -17,11 +17,14 @@ arguments=(
     --include-database "sdf-operator=$SDF_OPERATOR_DATABASE"
     --include "assets=$SDB_ASSET_ROOT"
     --include "sdb-config=$SDB_CONFIG"
-    --include "sdf-config=$SDF_CONFIG"
     --include "server-config=$config_file"
     --include "passwords=$AUTH_PASSWORD_FILE"
     --include "session-secret=$SESSION_SECRET_FILE"
 )
+
+if [[ -r "$HOME/.sdf.conf" ]]; then
+    arguments+=(--include "sdf-user-config=$HOME/.sdf.conf")
+fi
 
 if [[ "${SDB_BACKUP_INCLUDE_REFERENCE:-0}" == "1" ]]; then
     arguments+=(--include-reference)
