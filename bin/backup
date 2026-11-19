@@ -17,6 +17,7 @@ arguments=(
     --include-database "sdf-operator=$SDF_OPERATOR_DATABASE"
     --include "assets=$SDB_ASSET_ROOT"
     --include "sdb-config=$SDB_CONFIG"
+    --include "sdf-config=$SDF_CONFIG"
     --include "server-config=$config_file"
     --include "passwords=$AUTH_PASSWORD_FILE"
     --include "session-secret=$SESSION_SECRET_FILE"

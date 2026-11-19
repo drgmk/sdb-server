@@ -3,6 +3,7 @@
 
 SDB_ROOT=/path/to/sdb
 SDF_ROOT=/path/to/sdf
+SDF_CONFIG="$SDF_ROOT/sdf.toml"
 SDF_EXPORT_ROOT="$SDB_ROOT/rehearsals/multi-sample/export"
 SDF_OPERATOR_DATABASE="$SDF_EXPORT_ROOT/sdf-operator.sqlite"
 

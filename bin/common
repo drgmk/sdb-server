@@ -30,7 +30,7 @@ source "$config_file"
 : ${SDF_CLEANUP_INTERRUPTED_DAYS:=30}
 
 required_settings=(
-    SDB_ROOT SDF_ROOT SDF_EXPORT_ROOT SDF_FITS SDB_CLI SPHINXBUILD
+    SDB_ROOT SDF_ROOT SDF_CONFIG SDF_EXPORT_ROOT SDF_FITS SDB_CLI SPHINXBUILD
     SDB_DATABASE SDB_REFERENCE_DATABASE SDF_OPERATOR_DATABASE
     SDB_CACHE_DATABASE SDB_CONFIG AUTH_PASSWORD_FILE SESSION_SECRET_FILE
     HERSCHEL_ROOT DOCS_ROOT HTTPD FRONTEND_HOST FRONTEND_PORT SDF_HOST SDF_PORT
@@ -43,6 +43,14 @@ for setting in $required_settings; do
         return 1 2>/dev/null || exit 1
     fi
 done
+
+if [[ ! -r "$SDF_CONFIG" ]]; then
+    print -u2 "Missing SDF configuration: $SDF_CONFIG"
+    print -u2 "Copy $SDF_ROOT/sdf.example.toml to $SDF_ROOT/sdf.toml and edit its model root."
+    return 1 2>/dev/null || exit 1
+fi
+
+export SDF_CONFIG
 
 if [[ "$SDF_FIT_WORKERS" != <-> ]] || (( SDF_FIT_WORKERS < 1 )); then
     print -u2 "SDF_FIT_WORKERS must be a positive integer"

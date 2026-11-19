@@ -38,6 +38,17 @@ Copy the example and edit all paths for the machine:
 cp config/server.conf.example config/server.conf
 ```
 
+Copy SDF's small runtime example as well and point its model root at the full
+model library:
+
+```shell
+cp /path/to/sdf/sdf.example.toml /path/to/sdf/sdf.toml
+```
+
+`server.conf` exports this file as `SDF_CONFIG` for the website, workers,
+cleanup job, and documentation build. Standalone `sdf-fit` uses the same file
+when run from the SDF checkout.
+
 `config/server.conf` is deliberately ignored by Git. The default credential
 locations are also ignored:
 
@@ -149,7 +160,8 @@ directly. By default, 14 verified snapshots are retained under
 `private/backups`; each contains the live `sdb.sqlite`, `sdf-operator.sqlite`
 (persistent fit customisations and job state), the authoritative spectral
 assets, `sdb.toml`, the deployment configuration, `.htpasswd`, and the session
-secret. Both SQLite databases are copied online and integrity-checked. The
+secret. The selected `sdf.toml` is included as well. Both SQLite databases are
+copied online and integrity-checked. The
 directory is private and ignored by Git.
 
 Set `SDB_BACKUP_ROOT` in `config/server.conf` to a directory on another disk
