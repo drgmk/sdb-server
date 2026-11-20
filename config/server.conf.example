@@ -3,25 +3,26 @@
 
 SDB_ROOT=/path/to/sdb
 SDF_ROOT=/path/to/sdf
-SDF_EXPORT_ROOT="$SDB_ROOT/rehearsals/multi-sample/export"
+SDB_DATA_ROOT="$HOME/sdb-data"
+SDF_EXPORT_ROOT="$SDB_DATA_ROOT/seds"
 SDF_OPERATOR_DATABASE="$SDF_EXPORT_ROOT/sdf-operator.sqlite"
 
 SDF_FITS=/path/to/python-environment/bin/sdf-fits
 SDB_CLI=/path/to/python-environment/bin/sdb
 SPHINXBUILD=/path/to/python-environment/bin/sphinx-build
 
-SDB_DATABASE="$SDB_ROOT/rehearsals/multi-sample/sdb.sqlite"
-SDB_REFERENCE_DATABASE="$SDB_ROOT/sdb-reference.sqlite"
-SDB_CACHE_DATABASE="$SDB_ROOT/sdb-cache.sqlite"
+SDB_DATABASE="$SDB_DATA_ROOT/db/sdb.sqlite"
+SDB_REFERENCE_DATABASE="$SDB_DATA_ROOT/catalogs/sdb-reference.sqlite"
+SDB_CACHE_DATABASE="$SDB_DATA_ROOT/catalogs/sdb-cache.sqlite"
 SDB_CONFIG="$SDB_ROOT/sdb.toml"
 
-# These defaults keep private state inside the deployment directory. They are
-# ignored by Git and must be copied or created separately on each server.
-AUTH_PASSWORD_FILE="$SDB_SERVER_ROOT/.htpasswd"
-SESSION_SECRET_FILE="$SDB_SERVER_ROOT/session-secret"
+# Private instance state lives outside the replaceable deployment checkout and
+# must be copied or created separately on each server.
+AUTH_PASSWORD_FILE="$SDB_DATA_ROOT/private/.htpasswd"
+SESSION_SECRET_FILE="$SDB_DATA_ROOT/private/session-secret"
 
 # Static publications are generated artifacts rather than repository content.
-HERSCHEL_ROOT="$SDB_SERVER_ROOT/www/herschel"
+HERSCHEL_ROOT="$SDB_DATA_ROOT/public/herschel"
 DOCS_ROOT="$SDB_SERVER_ROOT/www/docs"
 
 HTTPD=/usr/sbin/httpd
@@ -55,8 +56,8 @@ SDB_SAMPLE_IMPORT_TIMEOUT=43200
 # always included. Put this on another mounted disk for protection against
 # loss of the server disk. Reference and cache databases are rebuildable and
 # omitted by default.
-SDB_BACKUP_ROOT="$SDB_SERVER_ROOT/private/backups"
+SDB_BACKUP_ROOT="$SDB_DATA_ROOT/backups/daily"
 SDB_BACKUP_KEEP=14
 SDB_BACKUP_INCLUDE_REFERENCE=0
 SDB_BACKUP_INCLUDE_CACHE=0
-SDB_ASSET_ROOT="$SDB_ROOT/rehearsals/multi-sample/assets"
+SDB_ASSET_ROOT="$SDB_DATA_ROOT/assets"

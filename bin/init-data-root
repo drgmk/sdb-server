@@ -1,0 +1,144 @@
+#!/bin/zsh
+
+set -eu
+
+usage() {
+    cat <<'EOF'
+Usage: bin/init-data-root [OPTIONS]
+
+Create an inactive sdb production-data directory tree. This command never
+edits server configuration, moves source data, or deletes destination files.
+
+Options:
+  --root DIR                 Data root (default: $SDB_DATA_ROOT or ~/sdb-data)
+  --cassis DIR               Copy an optional CASSIS spectrum archive
+  --herschel-source DIR      Copy optional TLDR PACS pipeline products
+  --herschel-public DIR      Copy an existing static Herschel publication
+  --dry-run                  Print the operations without changing files
+  -h, --help                 Show this help
+EOF
+}
+
+data_root=${SDB_DATA_ROOT:-$HOME/sdb-data}
+cassis_source=
+herschel_source=
+herschel_public=
+dry_run=0
+
+while (( $# )); do
+    case "$1" in
+        --root)
+            (( $# >= 2 )) || { print -u2 "--root requires a directory"; exit 2; }
+            [[ -n "$2" ]] || { print -u2 "--root must not be empty"; exit 2; }
+            data_root=$2
+            shift 2
+            ;;
+        --cassis)
+            (( $# >= 2 )) || { print -u2 "--cassis requires a directory"; exit 2; }
+            cassis_source=$2
+            shift 2
+            ;;
+        --herschel-source)
+            (( $# >= 2 )) || { print -u2 "--herschel-source requires a directory"; exit 2; }
+            herschel_source=$2
+            shift 2
+            ;;
+        --herschel-public)
+            (( $# >= 2 )) || { print -u2 "--herschel-public requires a directory"; exit 2; }
+            herschel_public=$2
+            shift 2
+            ;;
+        --dry-run)
+            dry_run=1
+            shift
+            ;;
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        *)
+            print -u2 "Unknown option: $1"
+            usage >&2
+            exit 2
+            ;;
+    esac
+done
+
+data_root=${data_root:A}
+if [[ "$data_root" == / || "$data_root" == "$HOME" ]]; then
+    print -u2 "Refusing to use a broad data root: $data_root"
+    exit 2
+fi
+
+validate_source() {
+    local label=$1
+    local source=$2
+    if [[ -n "$source" && ! -d "$source" ]]; then
+        print -u2 "$label directory does not exist: $source"
+        exit 2
+    fi
+}
+
+validate_source "CASSIS" "$cassis_source"
+validate_source "Herschel source" "$herschel_source"
+validate_source "Herschel publication" "$herschel_public"
+
+directories=(
+    "$data_root/db"
+    "$data_root/catalogs"
+    "$data_root/assets/spectra"
+    "$data_root/imports"
+    "$data_root/models/sdf"
+    "$data_root/seds"
+    "$data_root/public"
+    "$data_root/private"
+    "$data_root/backups/daily"
+)
+
+if (( dry_run )); then
+    print "Would create data root: $data_root"
+    printf '  %s\n' $directories
+else
+    mkdir -p $directories
+    chmod 700 "$data_root/private" "$data_root/backups" \
+        "$data_root/backups/daily"
+    print "Prepared data root: $data_root"
+fi
+
+copy_tree() {
+    local label=$1
+    local source=${2:A}
+    local destination=$3
+
+    if (( dry_run )); then
+        print "Would copy $label:"
+        print "  $source/"
+        print "  -> $destination/"
+        return
+    fi
+
+    command -v rsync >/dev/null || {
+        print -u2 "rsync is required to copy optional data"
+        exit 1
+    }
+    mkdir -p "$destination"
+    print "Copying $label..."
+    rsync -a --stats "$source/" "$destination/"
+}
+
+if [[ -n "$cassis_source" ]]; then
+    copy_tree "CASSIS archive" "$cassis_source" \
+        "$data_root/imports/cassis"
+fi
+if [[ -n "$herschel_source" ]]; then
+    copy_tree "Herschel source products" "$herschel_source" \
+        "$data_root/imports/herschel/${herschel_source:t}"
+fi
+if [[ -n "$herschel_public" ]]; then
+    copy_tree "Herschel static publication" "$herschel_public" \
+        "$data_root/public/herschel"
+fi
+
+print
+print "No service configuration was changed."
+print "Review docs/production-data.md before activating this data root."

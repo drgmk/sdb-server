@@ -32,6 +32,18 @@ on the activity page. Timestamps remain stored in UTC.
 
 ## Configure a host
 
+Prepare a production-data tree before configuring the services:
+
+```shell
+bin/init-data-root --dry-run
+bin/init-data-root
+```
+
+This only creates directories; it does not activate them or alter an existing
+server. Optional CASSIS and Herschel trees can be copied with explicit flags.
+See [the production data guide](docs/production-data.md) for the layout,
+durability classes, migration cautions, and `tldr_pacs` integration.
+
 Copy the example and edit all paths for the machine:
 
 ```shell
@@ -50,12 +62,12 @@ model_root = /path/to/full/model/library/
 The website, workers, cleanup job, documentation build, and standalone
 `sdf-fit` all load the same defaults and user override automatically.
 
-`config/server.conf` is deliberately ignored by Git. The default credential
-locations are also ignored:
+`config/server.conf` is deliberately ignored by Git. Credential locations are
+configured there and should remain private:
 
 ```text
-.htpasswd
-session-secret
+/path/to/sdb-data/private/.htpasswd
+/path/to/sdb-data/private/session-secret
 ```
 
 Create `.htpasswd` with Apache's `htpasswd` utility. `session-secret` is a
@@ -121,7 +133,7 @@ memory under representative fits.
 ## Sampler-work cleanup
 
 Completed fits retain compact posterior, analysis, and plotting artifacts.
-The much larger native MultiNest files under each `fits/.work/` directory are
+The much larger native MultiNest files under each `seds/*/.work/` directory are
 only useful temporarily for resuming interrupted work or diagnosing a recent
 fit. Inspect the current cleanup decision without changing files:
 
@@ -157,13 +169,13 @@ bin/install-backup
 ```
 
 It runs at 03:15 each day and once when loaded. `bin/backup` can also be run
-directly. By default, 14 verified snapshots are retained under
-`private/backups`; each contains the live `sdb.sqlite`, `sdf-operator.sqlite`
-(persistent fit customisations and job state), the authoritative spectral
-assets, `sdb.toml`, the deployment configuration, `.htpasswd`, and the session
-secret. The optional `~/.sdf.conf` override is included as well. Both SQLite
-databases are copied online and integrity-checked. The
-directory is private and ignored by Git.
+directly. The production example retains 14 verified snapshots under
+`$SDB_DATA_ROOT/backups/daily`; each contains the live `sdb.sqlite`,
+`sdf-operator.sqlite` (persistent fit customisations and job state), the
+authoritative spectral assets, `sdb.toml`, the deployment configuration,
+`.htpasswd`, and the session secret. The optional `~/.sdf.conf` override is
+included as well. Both SQLite databases are copied online and integrity-checked.
+The directory is owner-only and outside Git.
 
 Set `SDB_BACKUP_ROOT` in `config/server.conf` to a directory on another disk
 for protection against disk loss. A local snapshot only protects against
@@ -188,7 +200,8 @@ The following are intentionally not versioned:
 - `.htpasswd` and `session-secret`;
 - `config/server.conf`;
 - logs, PID files, and matplotlib caches; and
-- `www/`, including generated documentation and the Herschel/PACS publication.
+- `www/`, including generated documentation; the production example keeps the
+  optional Herschel/PACS publication under the external data root.
 
 This keeps a clone small and reproducible. Restoring a server consists of
 installing `sdb` and `sdf`, supplying the local config and credentials,
@@ -197,21 +210,24 @@ and running `bin/start`.
 
 ## Herschel/PACS publication
 
-Build the publication with `tldr_pacs`; it is too large and too reproducible to
-store here:
+Build the optional publication with
+[`tldr_pacs`](https://github.com/drgmk/tldr_pacs); it is too large and too
+reproducible to store here:
 
 ```shell
 cd /path/to/tldr_pacs
 python web/build.py \
   --product-root /path/to/tldr_pacs_jsmap_annulus_dc \
-  --output /path/to/sdb-server/www/herschel \
+  --output /path/to/sdb-data/public/herschel-next \
   --base-url /herschel/ \
   --preview-dpi 150 \
   --preview-timeout 30
 ```
 
-The `sdb` catalogue provider should use the resulting `manifest.json` and
-`/herschel/` as its public base URL.
+The publisher requires a new output directory. Inspect it, publish it as the
+configured `HERSCHEL_ROOT`, then point the `sdb` catalogue provider at the
+resulting `manifest.json` with `/herschel/` as its public base URL. Servers that
+do not use TLDR PACS can omit this integration.
 
 ## Production
 
